@@ -1,46 +1,42 @@
-/**
- * Make the following POST request with either axios or node-fetch:
 
-POST url: http://ambush-api.inyourarea.co.uk/ambush/intercept
-BODY: {
-    "url": "https://api.npms.io/v2/search/suggestions?q=react",
-    "method": "GET",
-    "return_payload": true
-}
+const axios = require('axios').default;
 
- *******
-
-The results should have this structure:
-{
-    "status": 200.0,
-    "location": [
-      ...
-    ],
-    "from": "CACHE",
-    "content": [
-      ...
-    ]
-}
-
- ******
-
- * With the results from this request, inside "content", 
- * list every maintainer and each package name that they maintain,
- * return an array with the following shape:
-[
-    ...
-    {
-        username: "a-username",
-        packageNames: ["a-package-name", "another-package"]
-    }
-    ...
-]
- * NOTE: the parent array and each "packageNames" array should 
- * be in alphabetical order.
- */
+  
 
 module.exports = async function organiseMaintainers() {
   // TODO
+  let maintainers= axios.post("http://ambush-api.inyourarea.co.uk/ambush/intercept",
+  {url: "https://api.npms.io/v2/search/suggestions?q=react",
+  method: "GET",
+  return_payload: true
+ }).then((response)=>{
+   var maintainers = new Map();
+   response.data.content.forEach(element => {
+     element.package.maintainers.forEach(main=>{
+       
+       maintainers.set(main.username,main.username)
+     })
+   })
+   let arr = Array.from(maintainers.keys())
+   arr.sort
+   arr.sort((a, b) => a.localeCompare(b))
 
+   let finallist = []
+   arr.forEach(contributer=>{
+     let packs =[]
+     response.data.content.forEach(element => {
+       element.package.maintainers.forEach(main=>{
+         if (main.username ===contributer){
+           packs.push(element.package.name)
+         } 
+       })
+     })
+     packs.sort((a, b) => a.localeCompare(b))
+
+     finallist.push({username:contributer, packageNames:packs})
+   })
+   return finallist
+ }
+ )        
   return maintainers
 };
