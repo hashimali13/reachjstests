@@ -18,7 +18,6 @@ module.exports = async function organiseMaintainers() {
      })
    })
    let arr = Array.from(maintainers.keys())
-   arr.sort
    arr.sort((a, b) => a.localeCompare(b))
 
    let finallist = []
